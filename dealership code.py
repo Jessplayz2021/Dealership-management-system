@@ -20,5 +20,14 @@ while True:
         print("1 Car sales")
         print("2 Repairs/Warranty")
         print("3 Just browsing")
-        int(input("Out of our options, What do you need today"))
-        
+        Option1=int(input("From out options, What would you like to pick? "))
+        if Option1 == 1:
+            exit()
+        elif Option1 == 2:
+            exit()
+        elif Option1 == 3:
+            exit()
+        else:
+            print("Sorry, please try again")
+            time.sleep(5)
+            goto(1)

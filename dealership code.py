@@ -8,11 +8,36 @@ y1 = today.strftime("%Y")
 D1=int(d1)
 M1=int(m1)
 Y1=int(y1)
+def ask_price(prompt):
+    while True:
+        value = input(prompt).replace(",", "").replace("£", "").strip()
+
+        if "." in value:
+            try:
+                pounds, pence = value.split(".")
+
+                if len(pence) != 2:
+                    print("Please enter exactly two digits after the decimal point.")
+                    continue
+
+                if not pounds.isdigit() or not pence.isdigit():
+                    print("Numbers only, please.")
+                    continue
+
+                return float(value)
+
+            except ValueError:
+                print("Please enter a valid price.")
+        else:
+            try:
+                return float(value)
+            except ValueError:
+                print("Numbers only, please.")
 
 def goto(linenum):
     global line
     line = linenum
-line = 1 :
+line = 1 
 while True:
     if line == 1:
         print("Hello there, welcome to our dealership!")
@@ -45,7 +70,7 @@ while True:
             time.sleep(2)
             print("I'm going to need a few details describing the issue.")
             time.sleep(2)
-            CarValue = int(input("Roughly how much did you pay for the vehicle? "))
+            CarValue = ask_price("How much did you pay for the vehicle? ")
             time.sleep(1)
             print("Please answer these following questions via. Yes/No")
             time.sleep(1)

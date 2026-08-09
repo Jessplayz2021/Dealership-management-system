@@ -22,11 +22,17 @@ def ask_warranty_years(prompt):
                 cautious_1 = input("Are you sure you put the correct number? ").upper()
                 if cautious_1 == "YES":
                     print("Sorry but we don't offer", warranty_value, "years.")
+                    continue #this will have a goto but to a new section where it will decide wether its suitable to continue
                 elif cautious_1 == "NO":
                     print("No worries, please go back")
+                    continue
+            elif warranty_value < 1:
+                print("We don't sell warranty for under a year.")
+                continue
             elif warranty_value <= 5:
                 print("Thank you")
             return warranty_value
+
 
         except ValueError:
             print("Please put the number of year/years as a number.")

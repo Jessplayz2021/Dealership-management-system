@@ -12,7 +12,7 @@ Y1=int(y1)
 def goto(linenum):
     global line
     line = linenum
-line = 1 
+line = 1 :
 while True:
     if line == 1:
         print("Hello there, welcome to our dealership!")
@@ -77,7 +77,7 @@ while True:
         time.sleep(0.5)
         Fuel = input("What do you want your car to use? AKA petrol, diesel, hybrid, electric or NA. ").upper()
         time.sleep(0.5)
-        Colour = input("Do you have a colour in mind? (If not then just put no)")
+        Colour = input("Do you have a colour in mind? (If not then just put no). ").upper()
         time.sleep(0.5)
         print("Thank you, let me just get that list for you now. ")
         exit() #again needs data base to continue

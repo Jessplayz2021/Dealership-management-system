@@ -11,6 +11,7 @@ def ask_yes_or_no(prompt):
             return True
         elif answer in ("NO", "N", "NAH"):
             return False
+        
         else:
             print("Please answer Yes or No.")
 
@@ -90,6 +91,10 @@ def ask_price(prompt):
             except ValueError:
                 print("Please enter a valid price.")
                 continue
+            
+        elif value.lower() in ("exit", "return"):
+            return None
+            
         else:
             try:
                 if not value.isdigit():
@@ -97,9 +102,14 @@ def ask_price(prompt):
                     continue
         
                 price = float(value)
-                if price <= 0:
+                if price <= 50:
                     print("Please enter the true price of the vehicle and not,",price)
                     continue
+                
+                elif price > 5000000:
+                    print(f"£{price:.2f} seems very high for a vehicle. Please check the ammount or talk to staff.")
+
+                
                 else:
                     if ask_yes_or_no(f"Are you sure that £{price:.2f} is correct? "):
                         print("Thank you for the information.")
@@ -197,7 +207,8 @@ def service():
         
         time.sleep(2)
         CarValue = ask_price("How much did you pay for the vehicle? ")
-
+        if CarValue is None:
+            return
         
         time.sleep(1)
         print("Please answer these following questions via. Yes/No")

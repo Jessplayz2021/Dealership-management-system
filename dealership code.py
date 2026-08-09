@@ -90,85 +90,120 @@ def ask_price(prompt):
             except ValueError:
                 print("Numbers only, please.")
 
-def goto(linenum):
-    global line
-    line = linenum
-line = 1 
-while True:
-    if line == 1:
+def main():
+    while True:
         print("Hello there, welcome to our dealership!")
         time.sleep(2)
         print("1 Car sales")
         print("2 Repairs/Warranty")
         print("3 Just browsing")
         Option1=input("From out options, What would you like to pick? ")
+        
         if Option1 == "1":
             input("Okay, What car or lot number do you wish for? ")
-            exit() #I need to create a data base for this
-        elif Option1 == "2":
-            goto(2)
-    if line == 2:
-        WarrantyOrRepair = input("Are you in for Warranty or Repair? (If you need to go back just say return). ").upper()
-        if WarrantyOrRepair == "WARRANTY":
-            print("Okay, I'm just going to get a few details. Please read these questions carefully.")
-            time.sleep(1)
-            purchase_date = ask_warranty_purchase("When was the warranty purchased? (DD/MM/YYYY) ")
-            time.sleep(1)
-            warranty_value = ask_warranty_years("How many years did you purchase the warranty for? ")
-            time.sleep(0.5)
-            expiry_date = add_years_safe(purchase_date, warranty_value)
-            if expiry_date < today:
-                print("Sorry but your warranty is expired on", expiry_date)
-            elif expiry_date == today:
-                print("Your warranty expires today. Please apply for extended warranty or we may have to include a price.")
-            else:
-                if ask_yes_or_no("Would you like to know your expiry date? "):
-                    print("Your expiry date is", expiry_date)
-                else:
-                    print("No worries, Let's continue.")
-        elif WarrantyOrRepair == "REPAIR":
-            print("I'm sorry for the issue, let me get it resolved for you as best I can!")
-            time.sleep(2)
-            print("I'm going to need a few details describing the issue.")
-            time.sleep(2)
-            CarValue = ask_price("How much did you pay for the vehicle? ")
-            time.sleep(1)
-            print("Please answer these following questions via. Yes/No")
-            time.sleep(1)
-            carstart = ask_yes_or_no("Does the car start? ")
-            time.sleep(0.2)
-            Soundsofissue = ask_yes_or_no("Is there any sound coming from this issue? ")
-            time.sleep(0.2)
-            Allignment = ask_yes_or_no("Does the vehicle pull to one side? ")
-            time.sleep(0.2)
-            smoothness = ask_yes_or_no("Does the vehicle feel rough when driving? ")
-            time.sleep(0.2)
-            print("Thank you, you may sit down and I will call you up when we know the issue.")
-            exit()#this bit will rely on future code
-        elif WarrantyOrRepair == "RETURN":
-            time.sleep(1)
-            goto(1)
-        else:
-            print("Please pick a listed option.")
-            time.sleep(1)
-            goto(2) 
-    elif Option1 == "3":
-        print("Okay... Here's a few questions I'd like to ask to narrow down your choices.")
-        time.sleep(1)
-        budget = ask_price("Firstly I need to know your budget? ")
-        time.sleep(0.5)
-        Gearbox = input("What is your prefered gearbox type? ").upper()
-        time.sleep(0.5)
-        Use = input("Next up what is the intended use: commuting, family use, performance, offroading, or mixed? ").upper()
-        time.sleep(0.5)
-        Fuel = input("What do you want your car to use? AKA petrol, diesel, hybrid, electric or NA. ").upper()
-        time.sleep(0.5)
-        Colour = input("Do you have a colour in mind? (If not then just put no). ").upper()
-        time.sleep(0.5)
-        print("Thank you, let me just get that list for you now. ")
-        exit() #again needs data base to continue
             
+            exit() #I need to create a data base for this
+            
+        elif Option1 == "2":
+            service()
+            
+        elif Option1 == "3":
+            print("Okay... Here's a few questions I'd like to ask to narrow down your choices.")
+            
+            time.sleep(1)
+            budget = ask_price("Firstly I need to know your budget? ")
+            
+            time.sleep(0.5)
+            Gearbox = input("What is your prefered gearbox type? ").upper()
+            
+            time.sleep(0.5)
+            Use = input("Next up what is the intended use: commuting, family use, performance, offroading, or mixed? ").upper()
+            
+            time.sleep(0.5)
+            Fuel = input("What do you want your car to use? AKA petrol, diesel, hybrid, electric or NA. ").upper()
+            
+            time.sleep(0.5)
+            Colour = input("Do you have a colour in mind? (If not then just put no). ").upper()
+            
+            time.sleep(0.5)
+            print("Thank you, let me just get that list for you now. ")
+            
+            exit() #again needs data base to continue
+            
+        else:
+            print("Sorry, please try again")
+            
+            time.sleep(5)
+            
+            main()#fail safe
+            
+def service():
+    
+    WarrantyOrRepair = input("Are you in for Warranty or Repair? (If you need to go back just say return). ").upper()
+    
+    if WarrantyOrRepair == "WARRANTY":
+        print("Okay, I'm just going to get a few details. Please read these questions carefully.")
+        
+        time.sleep(1)
+        purchase_date = ask_warranty_purchase("When was the warranty purchased? (DD/MM/YYYY) ")
+        
+        time.sleep(1)
+        warranty_value = ask_warranty_years("How many years did you purchase the warranty for? ")
+        
+        time.sleep(0.5)
+        expiry_date = add_years_safe(purchase_date, warranty_value)
+        
+        if expiry_date < today:
+            print("Sorry but your warranty is expired on", expiry_date)
+            
+        elif expiry_date == today:
+            print("Your warranty expires today. Please apply for extended warranty or we will have to include a price.")
+            
+        else:
+            
+            if ask_yes_or_no("Would you like to know your expiry date? "):
+                print("Your expiry date is", expiry_date)
+                
+            else:
+                print("No worries, Let's continue.")
+    elif WarrantyOrRepair == "REPAIR":
+        print("I'm sorry for the issue, let me get it resolved for you as best I can!")
+        
+        time.sleep(2)
+        print("I'm going to need a few details describing the issue.")
+        
+        time.sleep(2)
+        CarValue = ask_price("How much did you pay for the vehicle? ")
+        
+        time.sleep(1)
+        print("Please answer these following questions via. Yes/No")
+        
+        time.sleep(1)
+        carstart = ask_yes_or_no("Does the car start? ")
+        
+        time.sleep(0.2)
+        Soundsofissue = ask_yes_or_no("Is there any sound coming from this issue? ")
+        
+        time.sleep(0.2)
+        Allignment = ask_yes_or_no("Does the vehicle pull to one side? ")
+        
+        time.sleep(0.2)
+        smoothness = ask_yes_or_no("Does the vehicle feel rough when driving? ")
+        
+        time.sleep(0.2)
+        print("Thank you, you may sit down and I will call you up when we know the issue.")
+        
+        exit()#this bit will rely on future code
+        
+    elif WarrantyOrRepair == "RETURN":
+        time.sleep(1)
+        
+        main()
     else:
-        print("Sorry, please try again")
-        time.sleep(5)
-        goto(1)#fail safe
+        print("Please pick a listed option.")
+        
+        time.sleep(1)
+        
+        service()
+if __name__ == "__main__":
+    main()

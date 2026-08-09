@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from datetime import date
 
 today = date.today()
@@ -8,6 +9,61 @@ y1 = today.strftime("%Y")
 D1=int(d1)
 M1=int(m1)
 Y1=int(y1)
+def ask_yes_or_no(prompt):
+    while True:
+        answer = input(prompt).strip().upper()
+        if answer == "YES":
+            return True
+        elif answer == "NO":
+            return False
+        else:
+            print("Please answer Yes or No.")
+
+def ask_warranty_purchase(prompt):
+    while True:
+        try:
+            value = input(prompt)
+            purchase_date = datetime.strptime(value, "%d/%m/%Y").date()
+            if purchase_date > today:
+                print("Sorry, but the purchase date cant be in the future")
+                continue
+            return purchase_date
+        except ValueError:
+            print("Just do as it says")
+def ask_warranty_years(prompt):
+    while True:
+        try:
+            warranty_value = int(input(prompt))
+            if warranty_value > 5:
+                if ask_yes_or_no("Are you sure you put the correct number of years? "):
+                    print("Sorry but we don't offer", warranty_value, "years.")
+                    exit()# I want this section to go to another section where it checks suitability
+                else:
+                    print("No worries, Please put the correct number of years.")
+                    continue
+                
+            elif warranty_value < 1:
+                print("We don't sell warranty for under a year.")
+                continue
+            elif warranty_value <= 5:
+                print("Thank you")
+                return warranty_value
+
+
+        except ValueError:
+            print("Please put the number of year/years as a number.")
+def add_years_safe(purchase_date, years):
+    try:
+        return purchase_date.replace(
+            year=purchase_date.year + years
+        )
+    except ValueError:
+        return purchase_date.replace(
+            year=purchase_date.year + years,
+            day=28
+        )
+   
+
 def ask_price(prompt):
     while True:
         value = input(prompt).replace(",", "").replace("£", "").strip()
@@ -56,15 +112,20 @@ while True:
         if WarrantyOrRepair == "WARRANTY":
             print("Okay, I'm just going to get a few details. Please read these questions carefully.")
             time.sleep(1)
-            DayOfwarrantyPurchased = int(input("What day (DD) did you purchase the warranty? "))
-            time.sleep(0.5)
-            MonthOfWarrantyPurchased = int(input("Which month (MM) was it purchased in? "))
-            time.sleep(0.5)
-            YearOfWarrantyPurchased = int(input("Now finally what year (YYYY) was it purchased in? "))
+            purchase_date = ask_warranty_purchase("When was the warranty purchased? (DD/MM/YYYY) ")
             time.sleep(1)
-            print("Thank you, let me just check if your warranty is valid.")
-            time.sleep(5)
-            exit() #I need to create a date verification for this
+            warranty_value = ask_warranty_years("How many years did you purchase the warranty for? ")
+            time.sleep(0.5)
+            expiry_date = add_years_safe(purchase_date, warranty_value)
+            if expiry_date < today:
+                print("Sorry but your warranty is expired on", expiry_date)
+            elif expiry_date == today:
+                print("Your warranty expires today. Please apply for extended warranty or we may have to include a price.")
+            else:
+                if ask_yes_or_no("Would you like to know your expiry date? "):
+                    print("Your expiry date is", expiry_date)
+                else:
+                    print("No worries, Let's continue.")
         elif WarrantyOrRepair == "REPAIR":
             print("I'm sorry for the issue, let me get it resolved for you as best I can!")
             time.sleep(2)
@@ -74,13 +135,13 @@ while True:
             time.sleep(1)
             print("Please answer these following questions via. Yes/No")
             time.sleep(1)
-            carstart = input("Does the car start? ").upper()
+            carstart = ask_yes_or_no("Does the car start? ")
             time.sleep(0.2)
-            Soundsofissue = input("Is there any sound coming from this issue? ").upper()
+            Soundsofissue = ask_yes_or_no("Is there any sound coming from this issue? ")
             time.sleep(0.2)
-            Allignment = input("Does the vehicle pull to one side? ").upper()
+            Allignment = ask_yes_or_no("Does the vehicle pull to one side? ")
             time.sleep(0.2)
-            smoothness = input("Does the vehicle feel rough when driving? ").upper()
+            smoothness = ask_yes_or_no("Does the vehicle feel rough when driving? ")
             time.sleep(0.2)
             print("Thank you, you may sit down and I will call you up when we know the issue.")
             exit()#this bit will rely on future code
@@ -94,7 +155,7 @@ while True:
     elif Option1 == "3":
         print("Okay... Here's a few questions I'd like to ask to narrow down your choices.")
         time.sleep(1)
-        budget = int(input("Firstly I need to know your budget? (No commas or full stops). "))
+        budget = ask_price("Firstly I need to know your budget? ")
         time.sleep(0.5)
         Gearbox = input("What is your prefered gearbox type? ").upper()
         time.sleep(0.5)

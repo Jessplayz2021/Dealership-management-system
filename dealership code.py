@@ -3,18 +3,13 @@ from datetime import datetime
 from datetime import date
 
 today = date.today()
-d1 = today.strftime("%d")
-m1 = today.strftime("%m")
-y1 = today.strftime("%Y")
-D1=int(d1)
-M1=int(m1)
-Y1=int(y1)
+
 def ask_yes_or_no(prompt):
     while True:
         answer = input(prompt).strip().upper()
-        if answer == "YES":
+        if answer in ("YES", "Y", "YEA", "YEAH"):
             return True
-        elif answer == "NO":
+        elif answer in ("NO", "N", "NAH"):
             return False
         else:
             print("Please answer Yes or No.")
@@ -97,17 +92,18 @@ def main():
         print("1 Car sales")
         print("2 Repairs/Warranty")
         print("3 Just browsing")
-        Option1=input("From out options, What would you like to pick? ")
+        print("4 Exit")
+        Option1=input("From our options, What would you like to pick? ").upper()
         
-        if Option1 == "1":
+        if Option1 in ("1", "CAR SALES"):
             input("Okay, What car or lot number do you wish for? ")
             
             exit() #I need to create a data base for this
             
-        elif Option1 == "2":
+        elif Option1 in ("2", "REPAIRS/WARRANTY", "WARRANTY", "REPAIRS"):
             service()
             
-        elif Option1 == "3":
+        elif Option1 in ("3", "JUST BROWSING"):
             print("Okay... Here's a few questions I'd like to ask to narrow down your choices.")
             
             time.sleep(1)
@@ -129,17 +125,18 @@ def main():
             print("Thank you, let me just get that list for you now. ")
             
             exit() #again needs data base to continue
+        elif Option1 in ("4", "EXIT"):
+            exit()
             
         else:
             print("Sorry, please try again")
             
-            time.sleep(5)
+            time.sleep(0.5)
             
-            main()#fail safe
             
 def service():
     
-    WarrantyOrRepair = input("Are you in for Warranty or Repair? (If you need to go back just say return). ").upper()
+    WarrantyOrRepair = input("Are you in for Warranty or Repair? (If you need to go back just say return or exit). ").upper()
     
     if WarrantyOrRepair == "WARRANTY":
         print("Okay, I'm just going to get a few details. Please read these questions carefully.")
@@ -152,6 +149,7 @@ def service():
         
         time.sleep(0.5)
         expiry_date = add_years_safe(purchase_date, warranty_value)
+        expiry_date_true = expiry_date.strftime("%d/%m/%Y")
         
         if expiry_date < today:
             print("Sorry but your warranty is expired on", expiry_date)
@@ -198,12 +196,15 @@ def service():
     elif WarrantyOrRepair == "RETURN":
         time.sleep(1)
         
-        main()
+        return
+    elif WarrantyOrRepair == "EXIT":
+        print("Thank you for your time and have a good day.")
+        exit()
+    
     else:
         print("Please pick a listed option.")
         
         time.sleep(1)
-        
-        service()
+
 if __name__ == "__main__":
     main()

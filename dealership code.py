@@ -75,13 +75,38 @@ def ask_price(prompt):
                     print("Numbers only, please.")
                     continue
 
-                return float(value)
+                price = float(value)
+                if price <= 0:
+                    print("Please enter the true price of the vehicle and not,",price)
+                    continue
+                
+                if ask_yes_or_no(f"Are you sure £{price:.2f} is correct? "):
+                    print("Thank you for confirming the price.")
+                    return price
+                else:
+                    print("Okay, Please re-enter the price.")
+                    continue
 
             except ValueError:
                 print("Please enter a valid price.")
+                continue
         else:
             try:
-                return float(value)
+                if not value.isdigit():
+                    print("Please put the value in numbers.")
+                    continue
+        
+                price = float(value)
+                if price <= 0:
+                    print("Please enter the true price of the vehicle and not,",price)
+                    continue
+                else:
+                    if ask_yes_or_no(f"Are you sure that £{price:.2f} is correct? "):
+                        print("Thank you for the information.")
+                        return price
+                    else:
+                        print("Okay please put the value in")
+                    
             except ValueError:
                 print("Numbers only, please.")
 
@@ -163,7 +188,7 @@ def service():
                 print("Your expiry date is", expiry_date)
                 
             else:
-                print("No worries, Let's continue.")
+                print("No worries, Let's continue.")#waiting on future code
     elif WarrantyOrRepair == "REPAIR":
         print("I'm sorry for the issue, let me get it resolved for you as best I can!")
         
@@ -172,6 +197,7 @@ def service():
         
         time.sleep(2)
         CarValue = ask_price("How much did you pay for the vehicle? ")
+
         
         time.sleep(1)
         print("Please answer these following questions via. Yes/No")

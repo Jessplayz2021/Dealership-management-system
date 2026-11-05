@@ -1,6 +1,10 @@
 import time
 from datetime import datetime
 from datetime import date
+import sqlite3
+
+connection = sqlite3.connect("dealership.db")
+cursor = connection.cursor()
 
 today = date.today()
 
@@ -120,6 +124,67 @@ def ask_price(prompt):
             except ValueError:
                 print("Numbers only, please.")
 
+def setup_database():
+    with sqlite3.connect("dealership.db") as connection:
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS vehicles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                lot_number TEXT NOT NULL UNIQUE,
+                make TEXT NOT NULL,
+                model TEXT NOT NULL,
+                year INTEGER NOT NULL,
+                mileage INTEGER NOT NULL,
+                fuel TEXT NOT NULL,
+                gearbox TEXT NOT NULL,
+                colour TEXT NOT NULL,
+                engine_size TEXT,
+                drivetrain TEXT,
+                intended_use TEXT NOT NULL,
+                price_pence INTEGER NOT NULL,
+                status TEXT NOT NULL DEFAULT 'Available'
+            )
+        """)
+
+
+def add_vehicle(lot_number, make, model, year, mileage, fuel, gearbox,
+                colour, intended_use, price_pence, engine_size=None,
+                drivetrain=None):
+    """Add stock from trusted dealership data; later this can power an admin GUI."""
+    with sqlite3.connect("dealership.db") as connection:
+        connection.execute("""
+            INSERT INTO vehicles (
+                lot_number, make, model, year, mileage, fuel, gearbox,
+                colour, intended_use, price_pence, engine_size, drivetrain
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (lot_number, make, model, year, mileage, fuel, gearbox,
+              colour, intended_use, price_pence, engine_size, drivetrain))
+
+
+def car_sales():
+    search = input("Okay, what car or lot number do you wish for? ").strip()
+    if not search:
+        print("Please enter a vehicle or lot number.")
+        return
+
+    with sqlite3.connect("dealership.db") as connection:
+        rows = connection.execute("""
+            SELECT lot_number, make, model, year, mileage, fuel,
+                   gearbox, colour, intended_use, price_pence, status
+            FROM vehicles
+            WHERE lot_number = ? COLLATE NOCASE
+               OR (make || ' ' || model) LIKE ?
+               OR model LIKE ?
+            ORDER BY year DESC
+        """, (search, f"%{search}%", f"%{search}%")).fetchall()
+
+    if not rows:
+        print("Sorry, no matching vehicles are in our stock database.")
+        return
+
+    for lot, make, model, year, mileage, fuel, gearbox, colour, use, pence, status in rows:
+        print(f"Lot {lot}: {year} {make} {model} | {mileage:,} miles | "
+              f"{fuel}, {gearbox}, {colour} | {use} | £{pence / 100:,.2f} | {status}")
+
 def main():
     while True:
         print("Hello there, welcome to our dealership!")
@@ -131,8 +196,9 @@ def main():
         Option1=input("From our options, What would you like to pick? ").upper()
         
         if Option1 in ("1", "CAR SALES"):
-            input("Okay, What car or lot number do you wish for? ")
+            Lot_number_or_car = input("Okay, What car or lot number do you wish for? ")
             
+            print(Lot_number_or_car)
             exit() #I need to create a data base for this
             
         elif Option1 in ("2", "REPAIRS/WARRANTY", "WARRANTY", "REPAIRS"):
@@ -226,9 +292,10 @@ def service():
         smoothness = ask_yes_or_no("Does the vehicle feel rough when driving? ")
         
         time.sleep(0.2)
-        print("Thank you, you may sit down and I will call you up when we know the issue.")
+        print("Thank you, Your responses have been recorded for the workshop.")
         
-        exit()#this bit will rely on future code
+        return
+        
         
     elif WarrantyOrRepair == "RETURN":
         time.sleep(1)
